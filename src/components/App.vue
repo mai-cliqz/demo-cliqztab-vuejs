@@ -1,7 +1,5 @@
 <template>
   <div id="app">
-    <img src="../assets/logo.png">
-    <router-view></router-view>
     <home :freshtab="freshtab" :core="core"></home>
   </div>
 </template>

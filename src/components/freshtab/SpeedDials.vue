@@ -1,8 +1,5 @@
 <template>
   <div class="speed-dials">
-    <!-- <p v-for="dial in dials">
-      <speed-dial :dial="dial"></speed-dial>
-    </p> -->
     <speed-dial
       v-for="(dial, index) in dials"
       v-bind:dial="dial"
