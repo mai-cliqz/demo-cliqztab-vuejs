@@ -1,7 +1,7 @@
 <template>
   <div class="news" v-on:mouseover="onMouseOver" v-on:mouseout="onMouseOut">
     <a v-for="(article, index) in pages" v-on:click="setPage(index)" v-bind:id="'button-'+index"
-    v-bind:class="isActive(index)" class="button"></a>
+    v-bind:class="currentPage === index ? 'active' : ''" class="button"></a>
     <div class="acordion">
       <a v-for="(article, index) in news" class="article" v-bind:href="article.url">
         <div class="side-front">
@@ -101,12 +101,6 @@ export default {
       const acordion = this.$el.querySelector('.acordion')
       acordion.scrollTop = this.articleHeight * index
       this.currentPage = index
-    },
-    isActive (index) {
-      if (index === this.currentPage) {
-        return 'active'
-      }
-      return ''
     },
     setActive (index) {
       const buttonActive = this.$el.querySelector('.button.active')
