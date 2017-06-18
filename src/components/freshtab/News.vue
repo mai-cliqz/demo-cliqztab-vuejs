@@ -1,0 +1,135 @@
+<template>
+  <div class="news">
+    <a v-for="(article, index) in news">
+      {{ index }}: {{ article.title }}
+    </a>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'news',
+  props: ['news'],
+  data () {
+    return {
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss" scoped>
+@import './src/assets/styles/variables.scss';
+$cliqz-news-column-gap: 20px;
+$cliqz-news-column-width: calc((#{$content-width} - (2 * #{$cliqz-news-column-gap})) / 3);
+$cliqz-news-animation-speed: 0.2s;
+$cliqz-news-logo-size: 30px;
+
+.cliqz-news {
+  margin-top: 20px;
+  margin: 0 auto;
+
+  a.button {
+    border: 1px solid $color-cliqz-gray;
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    border-radius: 100%;
+    background-color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+    padding: 0px;
+
+    &.active {
+      background-color: $color-cliqz-gray;
+    }
+  }
+
+  .acordion {
+    width: 100%;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: $cliqz-news-column-width $cliqz-news-column-width $cliqz-news-column-width;
+    grid-column-gap: $cliqz-news-column-gap;
+  }
+
+  .article {
+    background-color: white;
+    border: 1px solid #DBDBDB;
+    padding: 5px;
+
+    color: $color-cliqz-black;
+    text-decoration: none;
+    position: relative;
+
+    p {
+      margin: 0px;
+      clear: both;
+    }
+
+    .source-name, .logo {
+      float: left;
+      display: inline-block;
+      height: $cliqz-news-logo-size;
+      margin-left: 10px;
+    }
+
+    .logo {
+      width: $cliqz-news-logo-size;
+    }
+
+    .source-name {
+      line-height: $cliqz-news-logo-size;
+    }
+
+    .title {
+      padding: 20px 5px 0px;
+    }
+
+    .side-front {
+      position: absolute;
+      top: 0;
+      left: 0px;
+      width: 100%;
+      height: 100%;
+      transition:opacity $cliqz-news-animation-speed linear;
+      transition-delay: $cliqz-news-animation-speed;
+      opacity: 1;
+    }
+
+    .side-back {
+      font-size: 14px;
+      padding-bottom: 1em;
+      transition:opacity $cliqz-news-animation-speed linear;
+      transition-delay: 0s;
+      opacity: 0;
+
+      a {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        height: 1em;
+        line-height: 1em;
+        color: $color-cliqz-blue;
+        padding: 5px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &:hover {
+      .side-front {
+        opacity: 0;
+        transition-delay: 0s;
+      }
+
+      .side-back {
+        transition-delay: $cliqz-news-animation-speed;
+        opacity: 1;
+      }
+    }
+  }
+}
+</style>
