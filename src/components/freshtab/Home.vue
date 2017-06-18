@@ -31,7 +31,7 @@ export default {
     return {
       locale: '',
       dials: {},
-      news: {}
+      news: []
     }
   },
   created () {
@@ -79,6 +79,9 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: center;
+    }
+    #middle {
+      margin-bottom: 10px;
     }
   }
 }

@@ -1,23 +1,130 @@
 <template>
-  <div class="news">
-    <a v-for="(article, index) in news">
-      {{ index }}: {{ article.title }}
-    </a>
+  <div class="news" v-on:mouseover="onMouseOver" v-on:mouseout="onMouseOut">
+    <a v-for="(article, index) in pages" v-on:click="setPage(index)" v-bind:id="'button-'+index"
+    v-bind:class="isActive(index)" class="button"></a>
+    <div class="acordion">
+      <a v-for="(article, index) in news" class="article" v-bind:href="article.url">
+        <div class="side-front">
+          <logo :logo="article.logo"></logo>
+          <span class="source-name">
+            {{article.displayUrl}}
+          </span>
+          <p class="title">
+            {{article.title}}
+          </p>
+        </div>
+        <div class="side-back">
+          <p class="abstract">
+            {{article.description}}
+          </p>
+          <a>Read more</a>
+        </div>
+      </a>
+    </div>
   </div>
 </template>
 
 <script>
+import Logo from './Logo.vue'
 export default {
   name: 'news',
+  components: { Logo },
   props: ['news'],
   data () {
     return {
+    }
+  },
+  created () {
+    this.articleHeight = 0
+    this.currentPage = 0
+    this.autopagination = true
+    this.skipNextPagination = false
+  },
+  updated () {
+    const acordion = this.$el.querySelector('.acordion')
+    const articles = Array.from(this.$el.querySelectorAll('.article'))
+    const heights = articles.map(function (el) {
+      return {
+        offsetHeight: el.offsetHeight,
+        clientHeight: el.clientHeight
+      }
+    })
+    const maxOffsetHeight = Math.max(...heights.map(function (el) { return el.offsetHeight }))
+    const maxClientHeight = Math.max(...heights.map(function (el) { return el.clientHeight }))
+
+    // + 10 is padding
+    this.articleHeight = maxOffsetHeight + 10
+    articles.forEach(function (el) {
+      el.style.height = maxClientHeight + 'px'
+    })
+    acordion.style.height = this.articleHeight + 'px'
+
+    this.startAutopagination()
+  },
+  computed: {
+    pageCount () {
+      return Math.ceil(this.news.length / 3)
+    },
+    pages () {
+      return Array(this.pageCount).fill(null)
+    }
+  },
+  methods: {
+    startAutopagination () {
+      this.interval = setInterval(function () {
+        if (!this.$el) {
+          clearInterval(this.interval)
+          delete this.interval
+          return
+        }
+
+        if (!this.autopagination) {
+          this.skipNextPagination = true
+          return
+        }
+
+        if (this.skipNextPagination) {
+          this.skipNextPagination = false
+          return
+        }
+
+        let nextPage = this.currentPage + 1
+        if (nextPage === this.pageCount) {
+          nextPage = 0
+        }
+
+        this.setPage(nextPage)
+      }.bind(this), 4000)
+    },
+    setPage (index) {
+      this.setActive(index)
+      const acordion = this.$el.querySelector('.acordion')
+      acordion.scrollTop = this.articleHeight * index
+      this.currentPage = index
+    },
+    isActive (index) {
+      if (index === this.currentPage) {
+        return 'active'
+      }
+      return ''
+    },
+    setActive (index) {
+      const buttonActive = this.$el.querySelector('.button.active')
+      buttonActive.classList.remove('active')
+      const currentButton = this.$el.querySelector(`#button-${index}`)
+      currentButton.classList.add('active')
+    },
+    onMouseOver () {
+      this.autopagination = false
+    },
+    onMouseOut () {
+      this.autopagination = true
     }
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+<!-- Add 'scoped' attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 @import './src/assets/styles/variables.scss';
 $cliqz-news-column-gap: 20px;
@@ -25,7 +132,7 @@ $cliqz-news-column-width: calc((#{$content-width} - (2 * #{$cliqz-news-column-ga
 $cliqz-news-animation-speed: 0.2s;
 $cliqz-news-logo-size: 30px;
 
-.cliqz-news {
+.news {
   margin-top: 20px;
   margin: 0 auto;
 
